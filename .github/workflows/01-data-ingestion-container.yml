@@ -17,7 +17,7 @@ jobs:
     name: data_ingestion
     runs-on: ubuntu-24.04
     env:
-      IMAGE_NAME: gardenlinux/glvd-data-ingestion
+      IMAGE_NAME: fwilhe/glvd-data-ingestion
       IMAGE_TAG: latest
 
     steps:
@@ -60,7 +60,7 @@ jobs:
       if: ${{ github.event_name != 'pull_request' }}
       id: get-token
       run: |
-        IDTOKEN=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=glvd" | jq -r '.value')
+        IDTOKEN=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=foo" | jq -r '.value')
         echo "idToken=${IDTOKEN}" >> $GITHUB_OUTPUT
 
     - uses: azure/k8s-set-context@v4
@@ -71,4 +71,4 @@ jobs:
 
     - name: Deploy the image
       if: ${{ github.event_name != 'pull_request' }}
-      run: kubectl --namespace default --token "${{ steps.get-token.outputs.idToken }}" set image cj/glvd-ingestion data-ingestion=ghcr.io/gardenlinux/glvd-data-ingestion@${{ steps.push-to-ghcr.outputs.digest }}
+      run: kubectl --namespace default --token "${{ steps.get-token.outputs.idToken }}" set image cj/glvd-ingestion data-ingestion=ghcr.io/fwilhe/glvd-data-ingestion@${{ steps.push-to-ghcr.outputs.digest }}
